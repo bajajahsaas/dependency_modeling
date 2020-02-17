@@ -316,6 +316,7 @@ def main():
         all_probs_pred.append(probs_pred)
         all_ranks_true.append(ranks_true)
 
+    print('Finished execution, saving files..')
     np.save(os.path.join(args.output_dir,
                          'all_tokenized_texts_{}.npy'.format(args.span_length)), np.array(all_tokenized_texts))
     np.save(os.path.join(args.output_dir,

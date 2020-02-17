@@ -219,6 +219,7 @@ def main():
                     example["masked_index"] = masked_index
                     outputs[tag].append(example)
 
+    print('Finished execution, saving files..')
     np.save(os.path.join(args.output_dir,
                          'tags_{}.npy'.format(args.model_type)), np.array(outputs))
 
