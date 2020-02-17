@@ -15,7 +15,7 @@ export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000 #3000
 export MODEL_NAME=roberta # bert, xlnet, xlm, roberta
 export DATA_NAME=aclImdb
-export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ
+export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all.sh)
 
 export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}-${TAG}
 #../data/aclImdb/train \

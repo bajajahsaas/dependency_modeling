@@ -1,6 +1,14 @@
 #!/bin/bash
-export ENV_TORCH_HOME=/mnt/nfs/work1/miyyer/tuvu/torch/
-export ENV_XDG_CACHE_HOME=/mnt/nfs/work1/miyyer/tuvu/
+#
+#SBATCH --job-name=dep_model
+#SBATCH --output=logsdepmodel/dep_model_%j.txt  # output file
+#SBATCH -e logsdepmodel/dep_model_%j.err        # File to which STDERR will be written
+#SBATCH --gres=gpu:1
+#SBATCH --partition=1080ti-long # Partition to submit to
+#SBATCH --mem=40GB
+#
+#SBATCH --ntasks=1
+
 export MODEL_NAME_OR_PATH=roberta-base
 #export MODEL_NAME_OR_PATH=/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
 #export MODEL_NAME_OR_PATH=/mnt/nfs/work1/miyyer/tuvu/torch/spanbert_hf_base/
