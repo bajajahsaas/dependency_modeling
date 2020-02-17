@@ -152,8 +152,13 @@ def main():
         if len(tokenized_text) >= 1 + 2 * args.max_context_size + args.max_span_length:
             original_texts.append(text)
             tokenized_texts.append(tokenized_text[:args.max_seq_length - 2])  # two positions for special tokens
-    import pdb
-    pdb.set_trace()
+
+    # import pdb
+    # pdb.set_trace()
+
+    print('max_num_examples: ', args.max_num_examples)
+    print('tokenized text length: ', len(tokenized_texts))
+
     tokenized_texts = tokenized_texts[:args.max_num_examples]
     logger.info("***** Finished tokenizing data *****")
     logger.info("  Num examples = %d", len(tokenized_texts))
