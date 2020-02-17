@@ -31,18 +31,20 @@ from torch.nn import CrossEntropyLoss
 from tqdm import tqdm, trange
 import math
 
-from pytorch_transformers import (WEIGHTS_NAME,
-                                  BertConfig, BertForMaskedLM, BertTokenizer,
-                                  RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
-                                  XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
-                                  XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
+from transformers import (WEIGHTS_NAME,
+                          BertConfig, BertForMaskedLM, BertTokenizer,
+                          RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
+                          XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
+                          XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
 
 from data_processing import get_texts
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)), ())
+ALL_MODELS = sum(
+    (tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)),
+    ())
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForMaskedLM, BertTokenizer),
@@ -51,12 +53,14 @@ MODEL_CLASSES = {
     'roberta': (RobertaConfig, RobertaForMaskedLM, RobertaTokenizer),
 }
 
+
 def set_seed(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -65,11 +69,12 @@ def main():
     parser.add_argument("--data_name", default=None, type=str, required=True,
                         help="The dataset name.")
     parser.add_argument("--data_dir", default=None, type=str, required=True,
-                         help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
+                        help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
     parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
-                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
+                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(
+                            ALL_MODELS))
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
 
@@ -116,9 +121,9 @@ def main():
     args.n_gpu = torch.cuda.device_count()
 
     # Setup logging
-    logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                        datefmt = '%m/%d/%Y %H:%M:%S',
-                        level = logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                        datefmt='%m/%d/%Y %H:%M:%S',
+                        level=logging.INFO)
     logger.info("device: {} n_gpu: {}".format(args.device, args.n_gpu))
 
     # Set seed
@@ -128,8 +133,10 @@ def main():
     args.model_type = args.model_type.lower()
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
-    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
-    model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path), config=config)
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
+                                                do_lower_case=args.do_lower_case)
+    model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                        config=config)
 
     original_texts = []
     tokenized_texts = []
@@ -144,7 +151,7 @@ def main():
         tokenized_text = tokenizer.tokenize(text)
         if len(tokenized_text) >= 1 + 2 * args.max_context_size + args.max_span_length:
             original_texts.append(text)
-            tokenized_texts.append(tokenized_text[:args.max_seq_length-2]) # two positions for special tokens
+            tokenized_texts.append(tokenized_text[:args.max_seq_length - 2])  # two positions for special tokens
     import pdb
     pdb.set_trace()
     tokenized_texts = tokenized_texts[:args.max_num_examples]
@@ -172,7 +179,7 @@ def main():
     for tokenized_text in tokenized_texts:
         count += 1
         if count > 1:
-            logger.info("***** Finished %d examples *****", count-1)
+            logger.info("***** Finished %d examples *****", count - 1)
 
         span_start_index = random.randrange(1 + args.max_context_size,
                                             1 + len(tokenized_text) - args.max_context_size - args.span_length)
@@ -206,8 +213,8 @@ def main():
         probs_pred = []
         ranks_true = []
 
-        context_sizes = [1,2,3] + list(range(5,30,5)) + list(range(30,args.max_context_size,10))
-        #for context_size in range(1, 1 + args.max_context_size):
+        context_sizes = [1, 2, 3] + list(range(5, 30, 5)) + list(range(30, args.max_context_size, 10))
+        # for context_size in range(1, 1 + args.max_context_size):
         for context_size in context_sizes:
             context_masked_text = tokenized_text[:]
             context_masked_text = context_masked_text[span_start_index - context_size:span_end_index + context_size + 1]
@@ -217,7 +224,8 @@ def main():
                 # indexed_tokens = tokenizer.convert_tokens_to_ids(context_masked_text)
             else:
                 masked_indices = original_masked_indices - (span_start_index - context_size) + 1
-            indexed_tokens = tokenizer.add_special_tokens_single_sentence(tokenizer.convert_tokens_to_ids(context_masked_text))
+            indexed_tokens = tokenizer.add_special_tokens_single_sentence(
+                tokenizer.convert_tokens_to_ids(context_masked_text))
             # Define sentence
             segments_ids = [0] * len(indexed_tokens)
             tokens_tensor = torch.tensor([indexed_tokens])
@@ -258,11 +266,15 @@ def main():
                     predictions = outputs[0].view(-1, config.vocab_size)[masked_indices]
 
             masked_probabilities = predictions.softmax(dim=1)
-            probabilities_correct = masked_probabilities.gather(1, correct_ids.view(-1,1))
+            probabilities_correct = masked_probabilities.gather(1, correct_ids.view(-1, 1))
 
             prob = probabilities_correct.mean().item()
-            
-            ranks = predictions.size(1) - torch.zeros_like(predictions).long().scatter_(1, predictions.argsort(dim=1), torch.arange(predictions.size(1), device=args.device).repeat(predictions.size(0), 1))
+
+            ranks = predictions.size(1) - torch.zeros_like(predictions).long().scatter_(1, predictions.argsort(dim=1),
+                                                                                        torch.arange(
+                                                                                            predictions.size(1),
+                                                                                            device=args.device).repeat(
+                                                                                            predictions.size(0), 1))
             ranks = ranks.gather(1, correct_ids.view(-1, 1)).float()
             rank = ranks.mean().item()
 
@@ -299,7 +311,6 @@ def main():
         all_probs_pred.append(probs_pred)
         all_ranks_true.append(ranks_true)
 
-
     np.save(os.path.join(args.output_dir,
                          'all_tokenized_texts_{}.npy'.format(args.span_length)), np.array(all_tokenized_texts))
     np.save(os.path.join(args.output_dir,
@@ -322,6 +333,7 @@ def main():
                          'all_ranks_true_{}.npy'.format(args.span_length)), np.array(all_ranks_true))
     np.save(os.path.join(args.output_dir,
                          'all_masked_toks_{}.npy'.format(args.span_length)), np.array(all_masked_toks))
+
 
 if __name__ == "__main__":
     main()

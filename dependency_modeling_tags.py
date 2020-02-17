@@ -31,7 +31,7 @@ from torch.nn import CrossEntropyLoss
 from tqdm import tqdm, trange
 import math
 
-from pytorch_transformers import (WEIGHTS_NAME,
+from transformers import (WEIGHTS_NAME,
                                   BertConfig, BertForMaskedLM, BertTokenizer,
                                   RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
                                   XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
