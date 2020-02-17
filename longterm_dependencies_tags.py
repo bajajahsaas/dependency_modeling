@@ -31,22 +31,25 @@ from torch.nn import CrossEntropyLoss
 from tqdm import tqdm, trange
 import math
 
-from pytorch_transformers import (WEIGHTS_NAME,
-                                  BertConfig, BertForMaskedLM, BertTokenizer,
-                                  RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
-                                  XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
-                                  XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
+from transformers import (WEIGHTS_NAME,
+                          BertConfig, BertForMaskedLM, BertTokenizer,
+                          RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
+                          XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
+                          XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
 
 from data_processing import get_texts
 from pathlib import Path
 from collections import Counter
 
 import spacy
+
 nlp = spacy.load("en_core_web_sm")
 
 logger = logging.getLogger(__name__)
 
-ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)), ())
+ALL_MODELS = sum(
+    (tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)),
+    ())
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForMaskedLM, BertTokenizer),
@@ -55,12 +58,14 @@ MODEL_CLASSES = {
     'roberta': (RobertaConfig, RobertaForMaskedLM, RobertaTokenizer),
 }
 
+
 def set_seed(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -69,11 +74,12 @@ def main():
     parser.add_argument("--data_name", default=None, type=str, required=True,
                         help="The dataset name.")
     parser.add_argument("--data_dir", default=None, type=str, required=True,
-                         help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
+                        help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
     parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
-                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
+                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(
+                            ALL_MODELS))
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
 
@@ -124,16 +130,17 @@ def main():
     args.n_gpu = torch.cuda.device_count()
 
     # Setup logging
-    logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                        datefmt = '%m/%d/%Y %H:%M:%S',
-                        level = logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                        datefmt='%m/%d/%Y %H:%M:%S',
+                        level=logging.INFO)
     logger.info("device: {} n_gpu: {}".format(args.device, args.n_gpu))
 
     # Set seed
     set_seed(args)
     args.model_type = args.model_type.lower()
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
+                                                do_lower_case=args.do_lower_case)
     TAGS = args.tags.split(",")
 
     original_texts = {}
@@ -146,13 +153,13 @@ def main():
         if count % 100 == 0:
             logger.info("  Loaded and processed %d examples", count)
 
-        #doc = nlp(text)
-        #pos_map = {}
-        #for i in range(len(doc)-1):
+        # doc = nlp(text)
+        # pos_map = {}
+        # for i in range(len(doc)-1):
         #    if str(doc[i]).lower() not in pos_map:
         #        pos_map[str(doc[i]).lower()] = {}
         #    pos_map[str(doc[i]).lower()][str(doc[i + 1]).lower()] = str(doc[i].pos_)
-        #pos_maps.append(pos_map)
+        # pos_maps.append(pos_map)
         text = tokenizer.cls_token + " " + text.strip()
         tokenized_text = tokenizer.tokenize(text)
         tokenized_texts.append(tokenized_text)
@@ -160,20 +167,20 @@ def main():
 
     logger.info("***** Finished tokenizing data *****")
     word_frequency = Counter(w for s in tokenized_texts for w in s)
-    #import pdb; pdb.set_trace() 
+    # import pdb; pdb.set_trace()
     frequent_words = {w: None for w, f in word_frequency.most_common() if f >= args.frequency_threshold}
-    #rare_words = {w: None for w, f in word_frequency.most_common() if f <= 250}
-    #import pdb
-    #pdb.set_trace()
+    # rare_words = {w: None for w, f in word_frequency.most_common() if f <= 250}
+    # import pdb
+    # pdb.set_trace()
     selected_tokenized_texts = []
     selected_pos_maps = []
     for i in range(len(tokenized_texts)):
         if len(tokenized_texts[i]) >= 1 + 2 * args.max_context_size + args.max_span_length:
             selected_tokenized_texts.append(tokenized_texts[i][:args.max_seq_length - 2])
-            #selected_pos_maps.append(pos_maps[i])
+            # selected_pos_maps.append(pos_maps[i])
 
     tokenized_texts = selected_tokenized_texts[:]
-    #pos_maps = selected_pos_maps[:]
+    # pos_maps = selected_pos_maps[:]
 
     outputs = {}
     for tag in TAGS:
@@ -181,7 +188,7 @@ def main():
     count = 0
     for i in range(len(tokenized_texts)):
         tokenized_text = tokenized_texts[i]
-        #pos_map = pos_maps[i]
+        # pos_map = pos_maps[i]
         count += 1
         if count > 1:
             logger.info("***** Finished %d examples *****", count - 1)
@@ -198,13 +205,13 @@ def main():
             # frequent/infrequent words
             if token in frequent_words:
                 outputs["FREQ"].append(example)
-            #elif token in rare_words:
+            # elif token in rare_words:
             #    outputs["INFREQ"].append(example)
 
-            #if args.model_type not in ['bert']:
+            # if args.model_type not in ['bert']:
             #    token = str(tokenizer.convert_tokens_to_string(token)).strip()
             #    next_token = str(tokenizer.convert_tokens_to_string(next_token)).strip()
-            #if token.lower() in pos_map and next_token.lower() in pos_map[token.lower()]:
+            # if token.lower() in pos_map and next_token.lower() in pos_map[token.lower()]:
             #    tag = pos_map[token.lower()][next_token.lower()]
             #    if tag in TAGS:
             #        example = {}
@@ -215,6 +222,7 @@ def main():
 
     np.save(os.path.join(args.output_dir,
                          'tags_{}.npy'.format(args.model_type)), np.array(outputs))
+
 
 if __name__ == "__main__":
     main()
