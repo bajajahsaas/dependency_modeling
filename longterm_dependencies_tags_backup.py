@@ -167,8 +167,8 @@ def main():
 
     logger.info("***** Finished tokenizing data *****")
     word_frequency = Counter(w for s in tokenized_texts for w in s)
-    import pdb
-    pdb.set_trace()
+    # import pdb
+    # pdb.set_trace()
     frequent_words = {w: None for w, f in word_frequency.most_common() if f >= args.frequency_threshold}
 
     selected_tokenized_texts = []

@@ -229,7 +229,7 @@ def main():
                 # indexed_tokens = tokenizer.convert_tokens_to_ids(context_masked_text)
             else:
                 masked_indices = original_masked_indices - (span_start_index - context_size) + 1
-            indexed_tokens = tokenizer.add_special_tokens_single_sentence(
+            indexed_tokens = tokenizer.build_inputs_with_special_tokens(
                 tokenizer.convert_tokens_to_ids(context_masked_text))
             # Define sentence
             segments_ids = [0] * len(indexed_tokens)
