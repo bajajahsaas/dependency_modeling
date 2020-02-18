@@ -12,7 +12,7 @@ do
      export MODEL_NAME_PATH=${model_name_or_path[i]}
      export MODEL_NAME=${model_name[i]}
 #     echo $DATA $MODEL_NAME_PATH $MODEL_NAME
-     sbatch --gres=gpu:1 --partition=1080ti-long --mem=40GB --output=logsdepmodel/dependency_modeling_${MODEL_NAME}_${DATA}.txt dependency_modeling.sh ${MODEL_NAME_PATH} ${MODEL_NAME} ${DATA}
+     sbatch --job-name=${MODEL_NAME}_${DATA} --gres=gpu:1 --partition=1080ti-long --mem=40GB --output=logsdepmodel/dependency_modeling_${MODEL_NAME}_${DATA}.txt dependency_modeling.sh ${MODEL_NAME_PATH} ${MODEL_NAME} ${DATA}
   done
 done
 
