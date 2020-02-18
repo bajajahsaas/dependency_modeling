@@ -1,14 +1,4 @@
 #!/bin/bash
-#
-#SBATCH --job-name=dep_model
-#SBATCH --output=logsdepmodel/run_%j.txt  # output file
-#SBATCH -e logsdepmodel/run_%j.err        # File to which STDERR will be written
-#SBATCH --gres=gpu:1
-#SBATCH --partition=1080ti-long # Partition to submit to
-#SBATCH --mem=40GB
-#
-#SBATCH --ntasks=1
-
 
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
@@ -22,9 +12,9 @@ export MAX_NUM_EXAMPLES=3000
 #model_name=('bert', 'bert', 'roberta', 'roberta', 'xlnet', 'xlnet', 'xlm')
 #data_name=('RACE', 'aclImdb')
 
-export MODEL_NAME_OR_PATH=bert-base-cased
-export MODEL_NAME=bert # bert, xlnet, xlm, roberta
-export DATA_NAME=RACE # RACE, aclImdb
+export MODEL_NAME_OR_PATH=$1
+export MODEL_NAME=$2 # bert, xlnet, xlm, roberta
+export DATA_NAME=$3 # RACE, aclImdb
 export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
 
 python dependency_modeling.py \

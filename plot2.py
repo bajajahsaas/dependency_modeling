@@ -47,6 +47,8 @@ elif  measure == "rank":
 ax.set_ylabel(measure_label)
 plt.legend(title="Model")
 #plt.show()
-plt.savefig(f'{dataset}_{measure}_{start}_{end}.pdf', bbox_inches='tight')
+filename = f'{dataset}_{measure}_{start}_{end}.pdf'
+plot_path = "plots/"
+plt.savefig(plot_path + filename, bbox_inches='tight')
 
 
