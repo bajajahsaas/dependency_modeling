@@ -106,6 +106,7 @@ def main():
 
     print('Printing training configuration...')
     print('Data: ', args.data_name, ' model_type: ', args.model_type, ' model_name_path: ', args.model_name_or_path, 'output_dir: ', args.output_dir)
+
     if not os.path.exists(args.cache_dir):
         os.makedirs(args.cache_dir)
 
