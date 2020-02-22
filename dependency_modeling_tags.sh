@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export MODEL_NAME_OR_PATH=roberta-base #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
+export MODEL_NAME_OR_PATH=bert-base-cased #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
 # bert-base-cased, bert-large-cased,
 # roberta-base, roberta-large,
 # xlnet-base-cased, xlnet-large-cased
