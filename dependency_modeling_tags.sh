@@ -13,7 +13,7 @@ export MAX_SEQUENCE_LENGTH=512
 export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000 #3000
-export MODEL_NAME=roberta # bert, xlnet, xlm, roberta
+export MODEL_NAME=bert # bert, xlnet, xlm, roberta
 export DATA_NAME=aclImdb
 export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all_tags.sh)
 
