@@ -76,5 +76,6 @@ plt.legend(title="Word type", loc='best', title_fontsize=40, fontsize=40)
 
 #plt.show()
 all_tags = "_".join([t.split(" ")[0].lower() for t in tag_names])
-plt.savefig(f'z_{dataset}_{measure}_{start}_{end}_{all_tags}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
+plot_path = "../plots/"
+plt.savefig(plot_path + f'z_{dataset}_{measure}_{start}_{end}_{all_tags}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
 

@@ -5,7 +5,7 @@ import pandas as pd
 
 dataset = "RACE" # "RACE" "aclImdb"
 max_context_size = 249
-measure = "rank" # acc, ppl, loss, prob, rank
+measure = "loss" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
 start_label_index = 0
@@ -17,13 +17,14 @@ context_sizes = [str(cs) for cs in context_sizes]
 context_sizes = context_sizes[start_label_index:]
 
 data_dict = {}
-for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
+# for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
+for model_name in ["bert-base-cased", "roberta-base", "xlnet-base-cased"]:
     for span_length in range(start, end + 1):
         data_file = data_path / f'{model_name}-{dataset}' / f'all_{measure}_context_size_{span_length}.npy'
-        data = np.load(data_file)
+        data = np.load(data_file)  # dim:(examples, context sizes)
         data = data[:, start_label_index:]
-        data_mean = data.mean(axis=0)
-
+        data_mean = data.mean(axis=0)  # Taking mean across different examples, getting one value per context size
+        data_mean = data.mean(axis=0)  # Taking mean across different examples, getting one value per context size
         assert len(data_mean) == len(context_sizes)
         data_dict[model_name.split("-")[0].upper()] = data_mean
 
@@ -48,7 +49,7 @@ ax.set_ylabel(measure_label)
 plt.legend(title="Model")
 #plt.show()
 filename = f'{dataset}_{measure}_{start}_{end}.pdf'
-plot_path = "plots/"
+plot_path = "../plots/"
 plt.savefig(plot_path + filename, bbox_inches='tight')
 
 

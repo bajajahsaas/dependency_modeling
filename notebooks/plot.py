@@ -3,12 +3,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-model_name = "xlm-mlm-en-2048" #""xlnet-base-cased" #"roberta-base" # "bert-base-cased"
+model_name = "bert-base-cased" #""xlnet-base-cased" #"roberta-base" # "bert-base-cased"
 dataset = "RACE" # "RACE" "aclImdb"
 max_context_size = 249
-measure = "rank" # acc, ppl, loss, prob, rank
+measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
-end = 10
+end = 1
 start_label_index = 0
 data_dir = "../output_dir"
 data_path = Path(data_dir)
@@ -46,6 +46,6 @@ elif  measure == "rank":
 ax.set_ylabel(measure_label)
 plt.legend(title="Span length")
 #plt.show()
-
-plt.savefig(f'{model_name}_{dataset}_{measure}_{start}_{end}.pdf', bbox_inches='tight')
+plot_path = "../plots/"
+plt.savefig(plot_path + f'{model_name}_{dataset}_{measure}_{start}_{end}.pdf', bbox_inches='tight')
 

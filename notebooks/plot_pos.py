@@ -81,5 +81,6 @@ elif  measure == "rank":
 ax.set_ylabel(measure_label, fontsize=40)
 plt.legend(title="Part-of-speech tag", loc='best', title_fontsize=28, fontsize=28, ncol=2)
 #plt.show()
-plt.savefig(f'z_{dataset}_{measure}_{start}_{end}_{plot_tag}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
+plot_path = "../plots/"
+plt.savefig(plot_path + f'z_{dataset}_{measure}_{start}_{end}_{plot_tag}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
 
