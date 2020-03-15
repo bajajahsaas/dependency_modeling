@@ -9,7 +9,7 @@ max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
-data_dir = "../output_dir"
+data_dir = "../../output_dir"
 data_path = Path(data_dir)
 assert data_path.exists(), f'Error: {data_path} does not exist.'
 context_sizes = [1,2,3] + list(range(5,30,5)) + list(range(30, max_context_size,10))
@@ -27,7 +27,8 @@ model_name_dict["xlm-mlm-en-2048"] = "XLM"
 model_name_dict["xlnet-base-cased"] = "XLNet"
 
 data_dict = {}
-for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
+# for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
+for model_name in ["bert-base-cased", "roberta-base", "xlnet-base-cased"]:
     for span_length in range(start, end + 1):
         data_file = data_path / f'{model_name}-{dataset}' / f'all_{measure}_context_size_{span_length}.npy'
         data = np.load(data_file)
@@ -64,6 +65,6 @@ elif  measure == "rank":
 ax.set_ylabel(measure_label, fontsize=40)
 plt.legend(title="Model", loc='best', title_fontsize=40, fontsize=40)
 #plt.show()
-plot_path = "../plots/"
+plot_path = "../../plots/"
 plt.savefig(plot_path + f'new_{dataset}_{measure}_{start}_{end}.pdf', bbox_inches='tight')
 

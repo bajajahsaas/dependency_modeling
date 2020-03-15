@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 dataset = "aclImdb" # "RACE" "aclImdb"
-model_name = "roberta-base"
+model_name = "bert-base-cased"
 max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
 start_label_index = 0
-data_dir = "../output_dir"
+data_dir = "../../output_dir"
 data_path = Path(data_dir)
 assert data_path.exists(), f'Error: {data_path} does not exist.'
 context_sizes = [1,2,3] + list(range(5,30,5)) + list(range(30, max_context_size,10))
@@ -76,6 +76,6 @@ plt.legend(title="Word type", loc='best', title_fontsize=40, fontsize=40)
 
 #plt.show()
 all_tags = "_".join([t.split(" ")[0].lower() for t in tag_names])
-plot_path = "../plots/"
+plot_path = "../../plots/"
 plt.savefig(plot_path + f'z_{dataset}_{measure}_{start}_{end}_{all_tags}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
 

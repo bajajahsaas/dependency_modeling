@@ -9,7 +9,7 @@ measure = "loss" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
 start_label_index = 0
-data_dir = "../output_dir"
+data_dir = "../../output_dir"
 data_path = Path(data_dir)
 assert data_path.exists(), f'Error: {data_path} does not exist.'
 context_sizes = [1,2,3] + list(range(5,30,5)) + list(range(30, max_context_size,10))
@@ -49,7 +49,7 @@ ax.set_ylabel(measure_label)
 plt.legend(title="Model")
 #plt.show()
 filename = f'{dataset}_{measure}_{start}_{end}.pdf'
-plot_path = "../plots/"
+plot_path = "../../plots/"
 plt.savefig(plot_path + filename, bbox_inches='tight')
 
 

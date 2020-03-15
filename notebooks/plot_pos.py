@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 dataset = "aclImdb" # "RACE" "aclImdb"
-model_name = "roberta-base"
+model_name = "bert-base-cased"
 max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
 
-data_dir = "../output_dir"
+data_dir = "../../output_dir"
 data_path = Path(data_dir)
 assert data_path.exists(), f'Error: {data_path} does not exist.'
 context_sizes = [1,2,3] + list(range(5,30,5)) + list(range(30, max_context_size,10))
@@ -25,7 +25,7 @@ data_dict = {}
 #tag_list = ["FREQ", "INFREQ", "RAND", "VERB","PROPN","NOUN","PUNCT","ADP","ADJ","ADV","DET","NUM","PUNCT","PRON"]
 #plot_tag = "all"
 
-setting = 2 #2, 3
+setting = 4  # 1, 2, 3, 4
 
 if setting == 1:
     tag_list = ["FREQ", "INFREQ", "RAND", "VERB","PROPN","NOUN","PUNCT","ADP","ADJ","ADV","DET","NUM","PUNCT","PRON"]
@@ -36,6 +36,10 @@ elif setting == 2:
 elif setting == 3:
     tag_list = ["FREQ", "INFREQ"]
     plot_tag = "_".join([t.split(" ")[0].lower() for t in tag_list])
+elif setting == 4:
+    tag_list = ["PROPN", "NOUN",  "ADJ", "ADV", "DET", "NUM"]
+    plot_tag = "selected"
+
 else:
     raise ValueError("Invalid setting!")
 
@@ -57,6 +61,8 @@ if setting == 1:
 elif setting == 2:
     style = ['-'] #['.--'] + ['-'] * (len(tag_list) - 1)
 elif setting == 3:
+    style = ['-']#['+-', 'o-', '.--']
+elif setting == 4:
     style = ['-']#['+-', 'o-', '.--']
 
 ax = df.T.plot(xticks=range(len(context_sizes)), figsize=(16,12), style=style)
@@ -81,6 +87,6 @@ elif  measure == "rank":
 ax.set_ylabel(measure_label, fontsize=40)
 plt.legend(title="Part-of-speech tag", loc='best', title_fontsize=28, fontsize=28, ncol=2)
 #plt.show()
-plot_path = "../plots/"
+plot_path = "../../plots/"
 plt.savefig(plot_path + f'z_{dataset}_{measure}_{start}_{end}_{plot_tag}_{model_name.split("-")[0].lower()}.pdf', bbox_inches='tight')
 
