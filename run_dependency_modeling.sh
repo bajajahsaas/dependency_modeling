@@ -9,6 +9,7 @@
 #
 #SBATCH --ntasks=1
 
+# File to run one specific config (among run_all.sh)
 
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
@@ -17,10 +18,6 @@ export MAX_SEQUENCE_LENGTH=512
 export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000
-
-#model_name_or_path=('bert-base-cased', 'bert-large-cased', 'roberta-base', 'roberta-large', 'xlnet-base-cased', 'xlnet-large-cased', 'xlm-mlm-en-2048')
-#model_name=('bert', 'bert', 'roberta', 'roberta', 'xlnet', 'xlnet', 'xlm')
-#data_name=('RACE', 'aclImdb')
 
 export MODEL_NAME_OR_PATH=bert-base-cased
 export MODEL_NAME=bert # bert, xlnet, xlm, roberta
