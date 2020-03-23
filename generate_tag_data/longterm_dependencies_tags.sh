@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+#SBATCH --job-name=dep_model
+#SBATCH --output=logstagdata/run_%j.txt  # output file
+#SBATCH -e logstagdata/run_%j.err        # File to which STDERR will be written
+#SBATCH --gres=gpu:1
+#SBATCH --partition=1080ti-long # Partition to submit to
+#SBATCH --mem=40GB
+#
+#SBATCH --ntasks=1
 
 export MODEL_NAME_OR_PATH=roberta-base #xlnet-base-cased #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
 # bert-base-cased, bert-large-cased,

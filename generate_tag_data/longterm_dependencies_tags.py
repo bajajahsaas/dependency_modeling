@@ -37,7 +37,7 @@ from transformers import (WEIGHTS_NAME,
                           XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
                           XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
 
-from data_processing import get_texts
+import data_processing
 from pathlib import Path
 from collections import Counter
 
@@ -123,7 +123,7 @@ def main():
         raise ValueError("Data directory does not exist!")
 
     data_path = Path(args.data_dir)
-    texts = get_texts(args.data_name, data_path)
+    texts = data_processing.get_texts(args.data_name, data_path)
 
     # Setup CUDA, GPU & distributed training
     args.device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
