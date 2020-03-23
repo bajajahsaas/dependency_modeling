@@ -1,10 +1,5 @@
 #!/bin/bash
 
-
-# bert-base-cased, bert-large-cased,
-# roberta-base, roberta-large,
-# xlnet-base-cased, xlnet-large-cased
-# xlm-mlm-en-2048
 #export MODEL_NAME_OR_PATH=/Users/tutvu/Downloads/spanbert_hf_base
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
@@ -14,7 +9,12 @@ export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000 #3000
 export MODEL_NAME=xlnet # bert, xlnet, xlm, roberta
-export MODEL_NAME_OR_PATH=xlnet #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
+export MODEL_NAME_OR_PATH=xlnet-base-cased #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
+# bert-base-cased, bert-large-cased,
+# roberta-base, roberta-large,
+# xlnet-base-cased, xlnet-large-cased
+# xlm-mlm-en-2048
+
 export DATA_NAME=aclImdb
 export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all_tags.sh)
 
