@@ -8,12 +8,12 @@ export MAX_SEQUENCE_LENGTH=512
 export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000 #3000
-export MODEL_NAME=roberta # bert, xlnet, xlm, roberta
-export MODEL_NAME_OR_PATH=roberta-base #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
+export MODEL_NAME=xlnet # bert, xlnet, xlm, roberta
+export MODEL_NAME_OR_PATH=xlnet-base-cased
 # bert-base-cased, bert-large-cased,
 # roberta-base, roberta-large,
 # xlnet-base-cased, xlnet-large-cased
-# xlm-mlm-en-2048
+# /mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048
 
 export DATA_NAME=aclImdb
 export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all_tags.sh)

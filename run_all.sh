@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-#model_name_or_path=('bert-base-cased' 'bert-large-cased' 'roberta-base' 'roberta-large' 'xlnet-base-cased' 'xlnet-large-cased' 'xlm-mlm-en-2048')
+#model_name_or_path=('bert-base-cased' 'bert-large-cased' 'roberta-base' 'roberta-large' 'xlnet-base-cased' 'xlnet-large-cased' '/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
 #model_name=('bert' 'bert' 'roberta' 'roberta' 'xlnet' 'xlnet' 'xlm')
-model_name_or_path=('xlnet-base-cased' 'xlnet-large-cased' 'xlm-mlm-en-2048')
-model_name=('xlnet' 'xlnet' 'xlm')
+model_name_or_path=('/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
+model_name=('xlm')
 data_name=('RACE' 'aclImdb')
 
 for data in "${data_name[@]}"
