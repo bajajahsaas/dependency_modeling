@@ -123,7 +123,7 @@ def main():
         raise ValueError("Data directory does not exist!")
 
     data_path = Path(args.data_dir)
-    texts = data_processing.get_texts(args.data_name, data_path)
+    texts = get_texts(args.data_name, data_path)
 
     # Setup CUDA, GPU & distributed training
     args.device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
