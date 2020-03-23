@@ -37,7 +37,7 @@ from transformers import (WEIGHTS_NAME,
                           XLNetConfig, XLNetLMHeadModel, XLNetTokenizer,
                           XLMConfig, XLMWithLMHeadModel, XLMTokenizer)
 
-import data_processing
+from data_processing import get_texts
 from pathlib import Path
 from collections import Counter
 

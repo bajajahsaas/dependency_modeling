@@ -31,7 +31,7 @@ export FREQUENCY_THRESHOLD=11851
 export OUTPUT_DIR=../data/${DATA_NAME}/
 #../data/aclImdb/train \
 
-python longterm_dependencies_tags.py \
+python generate_tags_data.py \
   --data_name ${DATA_NAME} \
   --model_type ${MODEL_NAME} \
   --data_dir ../data/${DATA_NAME}/train \
