@@ -343,6 +343,7 @@ def main():
     np.save(os.path.join(args.output_dir,
                          'all_masked_toks_{}.npy'.format(args.span_length)), np.array(all_masked_toks))
 
+    print('Files saved in..', args.output_dir)
 
 if __name__ == "__main__":
     main()

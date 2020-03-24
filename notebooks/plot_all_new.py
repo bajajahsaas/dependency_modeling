@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 #plt.style.use('ggplot')
 
-dataset = "RACE" # "RACE" "aclImdb"
+dataset = "aclImdb" # "RACE" "aclImdb"
 max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
