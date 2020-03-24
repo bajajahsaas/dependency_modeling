@@ -8,14 +8,20 @@ export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000
 
-#model_name_or_path=('bert-base-cased', 'bert-large-cased', 'roberta-base', 'roberta-large', 'xlnet-base-cased', 'xlnet-large-cased', 'xlm-mlm-en-2048')
+#model_name_or_path=('bert-base-cased', 'bert-large-cased', 'roberta-base', 'roberta-large', 'xlnet-base-cased', 'xlnet-large-cased', '/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
 #model_name=('bert', 'bert', 'roberta', 'roberta', 'xlnet', 'xlnet', 'xlm')
 #data_name=('RACE', 'aclImdb')
 
 export MODEL_NAME_OR_PATH=$1
 export MODEL_NAME=$2 # bert, xlnet, xlm, roberta
 export DATA_NAME=$3 # RACE, aclImdb
-export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
+
+export CHECK_XLM="xlm"
+if [ "${MODEL_NAME}" = "${CHECK_XLM}" ]
+then export OUTPUT_DIR=../output_dir/xlm-mlm-en-2048-${DATA_NAME}
+else
+  export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
+fi
 
 python dependency_modeling.py \
   --data_name ${DATA_NAME} \
