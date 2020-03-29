@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #export MODEL_NAME_OR_PATH=/Users/tutvu/Downloads/spanbert_hf_base
+export NO_CUDA=True
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
 export MAX_CONTEXT_SIZE=249
@@ -40,5 +41,6 @@ python dependency_modeling_tags.py \
   --max_num_examples ${MAX_NUM_EXAMPLES} \
   --tag ${TAG} \
   --output_dir ${OUTPUT_DIR} \
-  --cache_dir ${CACHE_DIR}
+  --cache_dir ${CACHE_DIR} \
+  --no_cuda ${NO_CUDA}
 
