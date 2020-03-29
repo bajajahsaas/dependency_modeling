@@ -9,11 +9,11 @@
 #
 #SBATCH --ntasks=1
 
-export MODEL_NAME_OR_PATH=roberta-base #xlnet-base-cased #/mnt/nfs/work1/miyyer/tuvu/torch/xlm-mlm-en-2048 #
+export MODEL_NAME_OR_PATH=roberta-base
 # bert-base-cased, bert-large-cased,
 # roberta-base, roberta-large,
 # xlnet-base-cased, xlnet-large-cased
-# xlm-mlm-en-2048
+# /mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048
 #export MODEL_NAME_OR_PATH=/Users/tutvu/Downloads/spanbert_hf_base
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
@@ -31,7 +31,7 @@ export FREQUENCY_THRESHOLD=11851
 export OUTPUT_DIR=../data/${DATA_NAME}/
 #../data/aclImdb/train \
 
-python generate_tags_data.py \
+python generate_tags_data_backup.py \
   --data_name ${DATA_NAME} \
   --model_type ${MODEL_NAME} \
   --data_dir ../data/${DATA_NAME}/train \
