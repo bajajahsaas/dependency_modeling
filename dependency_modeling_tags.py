@@ -247,7 +247,6 @@ def main():
             # Predict all tokens
             with torch.no_grad():
                 outputs = model(**inputs)
-                print('outputs', outputs.shape, outputs)
                 print('outputs[0]', outputs[0].shape, outputs[0])
                 print('masked_indices', masked_indices.shape, masked_indices)
                 print('output.view()', outputs[0].view(-1, config.vocab_size).shape, outputs[0].view(-1, config.vocab_size))
