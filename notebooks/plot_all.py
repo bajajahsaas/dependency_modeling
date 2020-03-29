@@ -3,7 +3,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-dataset = "RACE" # "RACE" "aclImdb"
+'''
+Plot for all models (all token aggregated). Context size having no buckets
+'''
+
+dataset = "aclImdb" # "RACE" "aclImdb"
 max_context_size = 249
 measure = "loss" # acc, ppl, loss, prob, rank
 start = 1
@@ -17,8 +21,7 @@ context_sizes = [str(cs) for cs in context_sizes]
 context_sizes = context_sizes[start_label_index:]
 
 data_dict = {}
-# for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
-for model_name in ["bert-base-cased", "roberta-base", "xlnet-base-cased"]:
+for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
     for span_length in range(start, end + 1):
         data_file = data_path / f'{model_name}-{dataset}' / f'all_{measure}_context_size_{span_length}.npy'
         data = np.load(data_file)  # dim:(examples, context sizes)

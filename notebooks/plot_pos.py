@@ -3,6 +3,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+'''
+Plot for one model (diff POS sets)
+'''
+
+
 dataset = "aclImdb" # "RACE" "aclImdb"
 model_name = "bert-base-cased"
 max_context_size = 249

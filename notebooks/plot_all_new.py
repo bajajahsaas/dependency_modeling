@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 #plt.style.use('ggplot')
 
+
+'''
+Plot for all models (all token aggregated). Context size with buckets
+'''
+
+
 dataset = "aclImdb" # "RACE" "aclImdb"
 max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
@@ -27,8 +33,7 @@ model_name_dict["xlm-mlm-en-2048"] = "XLM"
 model_name_dict["xlnet-base-cased"] = "XLNet"
 
 data_dict = {}
-# for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
-for model_name in ["bert-base-cased", "roberta-base", "xlnet-base-cased"]:
+for model_name in ["bert-base-cased", "roberta-base", "xlm-mlm-en-2048", "xlnet-base-cased"]:
     for span_length in range(start, end + 1):
         data_file = data_path / f'{model_name}-{dataset}' / f'all_{measure}_context_size_{span_length}.npy'
         data = np.load(data_file)

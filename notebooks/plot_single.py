@@ -3,6 +3,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+'''
+Plot for one model (all token aggregated)
+'''
+
 model_name = "bert-base-cased" #""xlnet-base-cased" #"roberta-base" # "bert-base-cased"
 dataset = "RACE" # "RACE" "aclImdb"
 max_context_size = 249
