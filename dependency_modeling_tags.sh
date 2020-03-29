@@ -9,8 +9,8 @@ export MAX_SEQUENCE_LENGTH=512
 export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=3000 #3000
-export MODEL_NAME=xlm # bert, xlnet, xlm, roberta
-export MODEL_NAME_OR_PATH=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048
+export MODEL_NAME=xlnet # bert, xlnet, xlm, roberta
+export MODEL_NAME_OR_PATH=xlnet-base-cased
 # bert-base-cased, bert-large-cased,
 # roberta-base, roberta-large,
 # xlnet-base-cased, xlnet-large-cased
