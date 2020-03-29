@@ -247,12 +247,10 @@ def main():
             # Predict all tokens
             with torch.no_grad():
                 outputs = model(**inputs)
-                print('outputs[0]', outputs[0].shape, outputs[0])
-                print('masked_indices', masked_indices.shape, masked_indices)
-                print('output.view()', outputs[0].view(-1, config.vocab_size).shape, outputs[0].view(-1, config.vocab_size))
-                predictions = outputs[0].view(-1, config.vocab_size)[masked_indices]
-
-                print('predictions', predictions.shape, predictions)
+                if args.model_type in ['xlnet']:
+                    predictions = outputs[0].view(-1, config.vocab_size)
+                else:
+                    predictions = outputs[0].view(-1, config.vocab_size)[masked_indices]
 
             masked_probabilities = predictions.softmax(dim=1)
             probabilities_correct = masked_probabilities.gather(1, correct_ids.view(-1,1))
