@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #export MODEL_NAME_OR_PATH=/Users/tutvu/Downloads/spanbert_hf_base
-export NO_CUDA=False
+export NO_CUDA=True
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
 export MAX_CONTEXT_SIZE=249
