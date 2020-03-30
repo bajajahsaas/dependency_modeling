@@ -15,7 +15,7 @@ export MODEL_NAME_OR_PATH=roberta-base
 # xlnet-base-cased, xlnet-large-cased
 # /mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048
 
-export DATA_NAME=aclImdb
+export DATA_NAME=RACE # RACE, aclImdb
 export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all_tags.sh)
 
 export CHECK_XLM="xlm"
