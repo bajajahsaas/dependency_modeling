@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 '''
-Plot for all models (all token aggregated). Context size having no buckets
+Plot for all models (all token aggregated). Context size with buckets
 '''
 
 dataset = "aclImdb" # "RACE" "aclImdb"
 max_context_size = 249
-measure = "loss" # acc, ppl, loss, prob, rank
+measure = "acc" # acc, ppl, loss, prob, rank
 start = 1
 end = 1
 start_label_index = 0

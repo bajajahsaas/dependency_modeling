@@ -9,7 +9,6 @@ import pandas as pd
 Plot for all models (all token aggregated). Context size with buckets
 '''
 
-
 dataset = "aclImdb" # "RACE" "aclImdb"
 max_context_size = 249
 measure = "acc" # acc, ppl, loss, prob, rank
