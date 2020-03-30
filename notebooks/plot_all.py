@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 '''
-Plot for all models (all token aggregated). Context size with buckets
+Plot for all models (all token aggregated). Context size with no buckets
 '''
 
 dataset = "aclImdb" # "RACE" "aclImdb"

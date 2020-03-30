@@ -13,8 +13,8 @@
 # roberta-base, roberta-large,
 # xlnet-base-cased, xlnet-large-cased
 # /mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048
-export MODEL_NAME_OR_PATH=roberta-base
-export MODEL_NAME=roberta # bert, xlnet, xlm, roberta
+export MODEL_NAME_OR_PATH=bert-base
+export MODEL_NAME=bert # bert, xlnet, xlm, roberta
 export DATA_NAME=RACE # RACE, aclImdb
 export DO_LOWER_CASE=False
 export CACHE_DIR=../cache
