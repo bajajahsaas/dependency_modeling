@@ -255,6 +255,7 @@ def main():
             masked_probabilities = predictions.softmax(dim=1)
             probabilities_correct = masked_probabilities.gather(1, correct_ids.view(-1,1))
 
+            # mean over all examples in that context size
             prob = probabilities_correct.mean().item()
             ranks = predictions.size(1) - torch.zeros_like(predictions).long().scatter_(1, predictions.argsort(dim=1), torch.arange(predictions.size(1), device=args.device).repeat(predictions.size(0), 1))
             ranks = ranks.gather(1, correct_ids.view(-1, 1)).float()

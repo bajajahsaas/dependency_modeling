@@ -24,7 +24,7 @@ export SPAN_LENGTH=1
 export MAX_SPAN_LENGTH=1
 export MAX_NUM_EXAMPLES=100000 #3000
 export TAGS=FREQ,INFREQ,VERB,PROPN,SYM,CONJ,NOUN,SPACE,PART,INTJ,PUNCT,ADP,ADJ,X,ADV,DET,NUM,PUNCT,PRON
-#export TAGS=FREQ
+#export TAGS=FREQ # can run generate_tags_data.py (instead of backup one)
 export FREQUENCY_THRESHOLD=11851
 
 export OUTPUT_DIR=../data/${DATA_NAME}/

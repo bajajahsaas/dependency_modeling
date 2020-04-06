@@ -43,6 +43,7 @@ from collections import Counter
 
 import spacy
 
+# generate_tags_data_backup.py is the main file, this one basically for FREQ (tag)
 nlp = spacy.load("en_core_web_sm")
 
 logger = logging.getLogger(__name__)
