@@ -18,9 +18,9 @@ export DATA_NAME=$3 # RACE, aclImdb
 
 export CHECK_XLM="xlm"
 if [ "${MODEL_NAME}" = "${CHECK_XLM}" ]
-then export OUTPUT_DIR=../output_dir/xlm-mlm-en-2048-${DATA_NAME}
+then export OUTPUT_DIR=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/my_output_dir/xlm-mlm-en-2048-${DATA_NAME}
 else
-  export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
+  export OUTPUT_DIR=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/my_output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
 fi
 
 python dependency_modeling.py \

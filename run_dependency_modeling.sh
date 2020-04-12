@@ -22,7 +22,7 @@ export MAX_NUM_EXAMPLES=3000
 export MODEL_NAME_OR_PATH=bert-base-cased
 export MODEL_NAME=bert # bert, xlnet, xlm, roberta
 export DATA_NAME=RACE # RACE, aclImdb
-export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
+export OUTPUT_DIR=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/my_output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}
 
 python dependency_modeling.py \
   --data_name ${DATA_NAME} \

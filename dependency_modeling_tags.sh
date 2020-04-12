@@ -20,9 +20,9 @@ export TAG=$1 # NOUN,PROPN,PRON,VERB,ADJ,ADP,DET,FREQ,INFREQ (get from run_all_t
 
 export CHECK_XLM="xlm"
 if [ "${MODEL_NAME}" = "${CHECK_XLM}" ]
-then export OUTPUT_DIR=../output_dir/xlm-mlm-en-2048-${DATA_NAME}-${TAG}
+then export OUTPUT_DIR=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/my_output_dir/xlm-mlm-en-2048-${DATA_NAME}-${TAG}
 else
-  export OUTPUT_DIR=../output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}-${TAG}
+  export OUTPUT_DIR=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/my_output_dir/${MODEL_NAME_OR_PATH}-${DATA_NAME}-${TAG}
 fi
 
 #../data/aclImdb/train \
