@@ -143,6 +143,8 @@ def main():
 
     original_texts = []
     tokenized_texts = []
+    example_ids = []
+
     count = 0
     for text in texts:
         count += 1
@@ -155,6 +157,8 @@ def main():
         if len(tokenized_text) >= 1 + 2 * args.max_context_size + args.max_span_length:
             original_texts.append(text)
             tokenized_texts.append(tokenized_text[:args.max_seq_length - 2])  # two positions for special tokens
+            example_ids.append(count)  # to refer back to original dataset, which examples got in
+
 
     # import pdb
     # pdb.set_trace()
@@ -170,6 +174,9 @@ def main():
 
     np.save(os.path.join(args.output_dir,
                          'original_texts_{}.npy'.format(args.span_length)), np.array(original_texts))
+
+    np.save(os.path.join(args.output_dir,
+                         'examples_ids_{}.npy'.format(args.span_length)), np.array(example_ids))
 
     all_tokenized_texts = []
     all_acc_context_size = []
