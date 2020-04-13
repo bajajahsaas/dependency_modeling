@@ -172,6 +172,7 @@ def main():
     model.eval()
     model.to(args.device)
 
+    # ideally only write [:args.max_num_examples] version of lists below
     np.save(os.path.join(args.output_dir,
                          'original_texts_{}.npy'.format(args.span_length)), np.array(original_texts))
 
@@ -276,8 +277,10 @@ def main():
             with torch.no_grad():
                 outputs = model(**inputs)
                 if args.model_type in ['xlnet']:
+                    # Return target_mapping.shape[1] (already corresponds to masked_indices size)
                     predictions = outputs[0].view(-1, config.vocab_size)
                 else:
+                    # Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).
                     predictions = outputs[0].view(-1, config.vocab_size)[masked_indices]
 
             masked_probabilities = predictions.softmax(dim=1)

@@ -4,3 +4,4 @@ __pycache__/
 /notebooks/.ipynb_checkpoints/*
 /notebooks/results*/
 /notebooks/*.ipynb
+/notebooks/*.json
