@@ -2,8 +2,9 @@
 
 #model_name_or_path=('bert-base-cased' 'bert-large-cased' 'roberta-base' 'roberta-large' 'xlnet-base-cased' 'xlnet-large-cased' '/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
 #model_name=('bert' 'bert' 'roberta' 'roberta' 'xlnet' 'xlnet' 'xlm')
-model_name_or_path=('/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
-model_name=('xlm')
+
+model_name_or_path=('bert-base-cased' 'roberta-base' 'xlnet-base-cased' '/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/xlm-mlm-en-2048')
+model_name=('bert' 'roberta' 'xlnet' 'xlm')
 data_name=('RACE' 'aclImdb')
 
 for data in "${data_name[@]}"
@@ -14,7 +15,7 @@ do
      export MODEL_NAME_PATH=${model_name_or_path[i]}
      export MODEL_NAME=${model_name[i]}
 #     echo $DATA $MODEL_NAME_PATH $MODEL_NAME
-     sbatch --job-name=${MODEL_NAME}_${DATA} --gres=gpu:1 --partition=1080ti-long --mem=40GB --output=logsdepmodel/dependency_modeling_${MODEL_NAME}_${DATA}.txt dependency_modeling.sh ${MODEL_NAME_PATH} ${MODEL_NAME} ${DATA}
+     sbatch --job-name=${MODEL_NAME}_${DATA} --gres=gpu:1 --partition=2080ti-long --mem=40GB --output=logsdepmodel/dependency_modeling_${MODEL_NAME}_${DATA}.txt dependency_modeling.sh ${MODEL_NAME_PATH} ${MODEL_NAME} ${DATA}
   done
 done
 
