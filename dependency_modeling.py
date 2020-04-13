@@ -144,8 +144,9 @@ def main():
     original_texts = []
     tokenized_texts = []
     example_ids = []
+    map_id2example = {}
 
-    count = 0
+    count = 0  # exampleID in the dataset (stays same across models)
     for text in texts:
         count += 1
         if count % 100 == 0:
@@ -156,6 +157,8 @@ def main():
         tokenized_text = tokenizer.tokenize(text)
         if len(tokenized_text) >= 1 + 2 * args.max_context_size + args.max_span_length:
             original_texts.append(text)
+            idx = len(tokenized_texts)
+            map_id2example[idx] = count  # to be use in random seed setting (when run for different models)
             tokenized_texts.append(tokenized_text[:args.max_seq_length - 2])  # two positions for special tokens
             example_ids.append(count)  # to refer back to original dataset, which examples got in
 
@@ -173,6 +176,9 @@ def main():
     model.to(args.device)
 
     # ideally only write [:args.max_num_examples] version of lists below
+    original_texts = original_texts[:args.max_num_examples]
+    example_ids = example_ids[:args.max_num_examples]
+
     np.save(os.path.join(args.output_dir,
                          'original_texts_{}.npy'.format(args.span_length)), np.array(original_texts))
 
@@ -192,11 +198,12 @@ def main():
     all_masked_toks = []
 
     count = 0
-    for tokenized_text in tokenized_texts:
+    for idx, tokenized_text in enumerate(tokenized_texts):
         count += 1
         if count > 1:
             logger.info("***** Finished %d examples *****", count - 1)
 
+        random.seed(map_id2example[idx])  # find to fix random mask (based on the example in the dataset), exampleID constant across models
         span_start_index = random.randrange(1 + args.max_context_size,
                                             1 + len(tokenized_text) - args.max_context_size - args.span_length)
         original_masked_indices = list(range(span_start_index, span_start_index + args.span_length))
