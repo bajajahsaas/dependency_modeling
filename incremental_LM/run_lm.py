@@ -193,6 +193,7 @@ def main():
             "and load it from here, using --tokenizer_name"
         )
 
+
     if model_args.model_name_or_path:
         model = AutoModelWithLMHead.from_pretrained(
             model_args.model_name_or_path,
@@ -207,7 +208,12 @@ def main():
     assert (config.vocab_size == len(tokenizer)) # if true, below line has no impact (true for transformer-xl. so can comment)
     if model_args.model_type != "transfo-xl":
         model.resize_token_embeddings(len(tokenizer))
-        # following throws error for transformer-xl 
+        # following throws error for transformer-xl
+    if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
+        ###### Addition to fix variable length issue #########
+        logger.info("Explicity adding padding token to tokenizer")
+        tokenizer.pad_token = "<pad>"
+
     '''
     Resize input token embeddings matrix of the model if new_num_tokens != config.vocab_size. Take care of tying weights embeddings afterwards if the model class has a tie_weights() method.
 
