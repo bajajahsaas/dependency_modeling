@@ -144,7 +144,7 @@ def main():
     original_texts = []
     tokenized_texts = []
     example_ids = []
-    map_id2example = {}
+    map_id2example = {}  # maps tokenized index to the example (sentence) in the dataset: same across models
 
     count = 0  # exampleID in the dataset (stays same across models)
     for text in texts:
@@ -203,9 +203,11 @@ def main():
         if count > 1:
             logger.info("***** Finished %d examples *****", count - 1)
 
-        random.seed(map_id2example[idx])  # find to fix random mask (based on the example in the dataset), exampleID constant across models
+        random.seed(map_id2example[idx])
+        # find to fix random mask (based on the example in the dataset), exampleID constant across models
         span_start_index = random.randrange(1 + args.max_context_size,
                                             1 + len(tokenized_text) - args.max_context_size - args.span_length)
+
         original_masked_indices = list(range(span_start_index, span_start_index + args.span_length))
         span_end_index = original_masked_indices[-1]
 
