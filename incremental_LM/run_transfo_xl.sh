@@ -9,5 +9,7 @@
 #
 #SBATCH --ntasks=1
 
-# python test.py
-python run_transfo_xl.py --work_dir logsxl
+export MODEL_PATH=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/transfo-xl-wt103/
+
+# python test_xl.py ${MODEL_PATH}
+python run_transfo_xl.py --work_dir logsxl --model_name ${MODEL_PATH}

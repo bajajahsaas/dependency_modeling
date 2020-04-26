@@ -41,7 +41,7 @@ def main():
     parser = argparse.ArgumentParser(description="PyTorch Transformer Language Model")
     parser.add_argument("--model_name", type=str, default="transfo-xl-wt103", help="pretrained model name")
     parser.add_argument(
-        "--split", type=str, default="test", choices=["all", "valid", "test"], help="which split to evaluate"
+        "--split", type=str, default="all", choices=["all", "valid", "test"], help="which split to evaluate"
     )
     parser.add_argument("--batch_size", type=int, default=10, help="batch size")
     parser.add_argument("--tgt_len", type=int, default=128, help="number of tokens to predict")
@@ -75,8 +75,8 @@ def main():
     # and tokenizing the dataset
     # The pre-processed corpus is a convertion (using the conversion script )
     
-    corpus = TransfoXLCorpus.from_pretrained("./model/")
-    tokenizer = TransfoXLTokenizer.from_pretrained("./model/")
+    corpus = TransfoXLCorpus.from_pretrained(args.model_name)
+    tokenizer = TransfoXLTokenizer.from_pretrained(args.model_name)
 
 
 
@@ -90,7 +90,7 @@ def main():
     te_iter = corpus.get_iterator("test", args.batch_size, args.tgt_len, device=device, ext_len=args.ext_len)
 
     # Load a pre-trained model
-    model = TransfoXLLMHeadModel.from_pretrained("./model/")
+    model = TransfoXLLMHeadModel.from_pretrained(args.model_name)
     model = model.to(device)
 
     logger.info(

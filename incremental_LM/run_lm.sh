@@ -9,4 +9,9 @@
 #
 #SBATCH --ntasks=1
 
-python run_lm.py --model_type transfo-xl --model_name_or_path ./model/ --do_eval --eval_data_file ../../data/wikitext-103/valid.txt --line_by_line --output_dir logslm
+export MODEL_PATH=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/transfo-xl-wt103/
+
+python run_lm.py --model_type transfo-xl --model_name_or_path ${MODEL_PATH} --do_eval --eval_data_file ../../data/wikitext-103/valid.txt --line_by_line --output_dir logslm
+
+# bert, roberta style models using mlm objective; not autoregressive
+# python run_lm.py --model_type bert --model_name_or_path bert-base-uncased --do_eval --eval_data_file ../../data/wikitext-103/valid.txt --line_by_line --output_dir logslm --mlm

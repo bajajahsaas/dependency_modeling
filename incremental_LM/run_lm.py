@@ -47,8 +47,7 @@ logger = logging.getLogger(__name__)
 
 
 MODEL_CONFIG_CLASSES = list(MODEL_WITH_LM_HEAD_MAPPING.keys())
-MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
-
+MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES) # ('t5', 'distilbert', 'albert', 'camembert', 'xlm-roberta', 'bart', 'roberta', 'bert', 'openai-gpt', 'gpt2', 'transfo-xl', 'xlnet', 'flaubert', 'xlm', 'ctrl', 'electra')
 
 @dataclass
 class ModelArguments:
@@ -205,8 +204,18 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelWithLMHead.from_config(config)
 
-    model.resize_token_embeddings(len(tokenizer))
+    assert (config.vocab_size == len(tokenizer)) # if true, below line has no impact (true for transformer-xl. so can comment)
+    if model_args.model_type != "transfo-xl":
+        model.resize_token_embeddings(len(tokenizer))
+        # following throws error for transformer-xl 
+    '''
+    Resize input token embeddings matrix of the model if new_num_tokens != config.vocab_size. Take care of tying weights embeddings afterwards if the model class has a tie_weights() method.
 
+    Parameters
+    new_num_tokens – (optional) int: New number of tokens in the embedding matrix. Increasing the size will add newly initialized vectors at the end. 
+    Reducing the size will remove vectors from the end. If not provided or None: does nothing and just returns a pointer to the input tokens torch.nn.Embeddings Module of the model.
+
+    '''
     if config.model_type in ["bert", "roberta", "distilbert", "camembert"] and not data_args.mlm:
         raise ValueError(
             "BERT and RoBERTa-like models do not have LM heads but masked LM heads. They must be run using the --mlm "
@@ -264,7 +273,7 @@ def main():
         logger.info("*** Evaluate ***")
 
         eval_output = trainer.evaluate()
-
+        logger.info("eval_output keys: {}".format(eval_output.keys()))
         perplexity = math.exp(eval_output["loss"])
         result = {"perplexity": perplexity}
 
