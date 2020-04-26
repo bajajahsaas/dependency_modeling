@@ -5,3 +5,6 @@ __pycache__/
 /notebooks/results*/
 /notebooks/*.ipynb
 /notebooks/*.json
+incremental_LM/model/*
+incremental_LM/*.bin
+incremental_LM/logs*
