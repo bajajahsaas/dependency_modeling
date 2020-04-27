@@ -206,14 +206,6 @@ def main():
         model = AutoModelWithLMHead.from_config(config)
 
     assert (config.vocab_size == len(tokenizer)) # if true, below line has no impact (true for transformer-xl. so can comment)
-    if model_args.model_type != "transfo-xl":
-        model.resize_token_embeddings(len(tokenizer))
-        # following throws error for transformer-xl
-    if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
-        ###### Addition to fix variable length issue #########
-        logger.info("Explicity adding padding token to tokenizer")
-        tokenizer.pad_token = "<pad>"
-
     '''
     Resize input token embeddings matrix of the model if new_num_tokens != config.vocab_size. Take care of tying weights embeddings afterwards if the model class has a tie_weights() method.
 
@@ -222,6 +214,14 @@ def main():
     Reducing the size will remove vectors from the end. If not provided or None: does nothing and just returns a pointer to the input tokens torch.nn.Embeddings Module of the model.
 
     '''
+    if model_args.model_type != "transfo-xl":
+        model.resize_token_embeddings(len(tokenizer))
+        # following throws error for transformer-xl
+    if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
+        ###### Addition to fix variable length issue #########
+        logger.info("Explicity adding padding token to tokenizer")
+        tokenizer.pad_token = "<pad>"
+
     if config.model_type in ["bert", "roberta", "distilbert", "camembert"] and not data_args.mlm:
         raise ValueError(
             "BERT and RoBERTa-like models do not have LM heads but masked LM heads. They must be run using the --mlm "
