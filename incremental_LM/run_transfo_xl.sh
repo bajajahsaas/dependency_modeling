@@ -17,6 +17,6 @@ export MODEL_PATH=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/model
 tgts=(8 16 32 64 128 256 512 1024)
 for tgt in "${tgts[@]}"
 do
-    export TGT_LEN=$tgt
-    python run_transfo_xl.py --tgt_len ${TGT_LEN} --work_dir outxl --model_name ${MODEL_PATH} --no_write --batch_size 1
+    export MEM_LEN=$tgt
+    python run_transfo_xl.py --mem_len ${MEM_LEN} --work_dir outxl --model_name ${MODEL_PATH} --no_write --batch_size 1
 done
