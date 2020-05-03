@@ -29,7 +29,7 @@ import numpy as np
 import torch
 import os
 
-from transformers import TransfoXLLMHeadModel, TransfoXLTokenizer, XLNetLMHeadModel, XLNetTokenizer, XLMWithLMHeadModel, XLMTokenizer
+from transformers import TransfoXLLMHeadModel, TransfoXLTokenizer
 from transformers.tokenization_transfo_xl import TransfoXLCorpus
 
 logging.basicConfig(
@@ -37,11 +37,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-MODEL_CLASSES = {
-    'transfo-xl': (XLNetLMHeadModel, XLNetTokenizer),
-    'xlnet': (XLNetLMHeadModel, XLNetTokenizer),
-    'xlm': (XLMWithLMHeadModel, XLMTokenizer)
-}
 
 def main():
     parser = argparse.ArgumentParser(description="PyTorch Transformer Language Model")
@@ -84,7 +79,7 @@ def main():
     # The pre-processed corpus is a convertion (using the conversion script )
     
     # this path has corpus.bin (wikitext-103 processed for transformer-xl)
-    corpus = TransfoXLCorpus.from_pretrained("/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/transfo-xl-wt103/")
+    corpus = TransfoXLCorpus.from_pretrained(args.model_path)
 
     # corpus tokenized only for transformer-xl
     
@@ -99,12 +94,11 @@ def main():
 
     # Load a pre-trained model
 
-    model_class, tokenizer_class = MODEL_CLASSES[args.model_name]
 
-    model = model_class.from_pretrained(args.model_path)
+    model = TransfoXLLMHeadModel.from_pretrained(args.model_path)
     model = model.to(device)
 
-    tokenizer = tokenizer_class.from_pretrained(args.model_path)
+    tokenizer = TransfoXLTokenizer.from_pretrained(args.model_path)
 
     logger.info(
         "Evaluating with bsz {} tgt_len {} ext_len {} mem_len {} clamp_len {} no_write {}".format(
@@ -112,8 +106,8 @@ def main():
         )
     )
 
-    if args.model_name is 'transfo-xl':
-        model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
+
+    model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
         
     if args.clamp_len > 0:
         model.clamp_len = args.clamp_len
@@ -141,6 +135,7 @@ def main():
             mems = None
             mems1 = None
             for idx, (data, target, seq_len) in enumerate(eval_iter):
+                print('data.shape', data.shape, target.shape)
                 # for bsz = 1. sentence/target are dims: (bsz, seqlen)
                 # logger.info("sentence: {}".format(" ".join(tokenizer.convert_ids_to_tokens(data[0]))))
                 # logger.info("target: {}".format(" ".join(tokenizer.convert_ids_to_tokens(target[0]))))
