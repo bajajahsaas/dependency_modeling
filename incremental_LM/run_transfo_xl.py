@@ -135,7 +135,7 @@ def main():
             mems = None
             mems1 = None
             for idx, (data, target, seq_len) in enumerate(eval_iter):
-                print('data.shape', data.shape, target.shape)
+                # print('data.shape', data.shape, target.shape)
                 # for bsz = 1. sentence/target are dims: (bsz, seqlen)
                 # logger.info("sentence: {}".format(" ".join(tokenizer.convert_ids_to_tokens(data[0]))))
                 # logger.info("target: {}".format(" ".join(tokenizer.convert_ids_to_tokens(target[0]))))
