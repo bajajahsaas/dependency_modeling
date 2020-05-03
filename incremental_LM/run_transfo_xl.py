@@ -43,13 +43,13 @@ def main():
     parser.add_argument("--model_name", type=str, default="transfo-xl", help="pretrained model name")
     parser.add_argument("--model_path", type=str, default="transfo-xl-wt103", help="pretrained model path")
     parser.add_argument(
-        "--split", type=str, default="valid", choices=["all", "valid", "test"], help="which split to evaluate"
+        "--split", type=str, default="test", choices=["all", "valid", "test"], help="which split to evaluate"
     )
     parser.add_argument("--batch_size", type=int, default=10, help="batch size")
     parser.add_argument("--tgt_len", type=int, default=128, help="number of tokens to predict")
     parser.add_argument("--ext_len", type=int, default=0, help="length of the extended context")
     parser.add_argument("--mem_len", type=int, default=1600, help="length of the retained previous heads")
-    parser.add_argument("--clamp_len", type=int, default=1000, help="max positional embedding index")
+    parser.add_argument("--clamp_len", type=int, default=400, help="max positional embedding index")
     parser.add_argument("--no_cuda", action="store_true", help="Do not use CUDA even though CUA is available")
     parser.add_argument("--work_dir", type=str, required=True, help="path to the work_dir")
     parser.add_argument("--no_log", action="store_true", help="do not log the eval result")
@@ -206,7 +206,7 @@ def main():
         return total_loss / total_len
 
     # Run on test data.
-    outDir = os.path.join(args.work_dir, args.split, str(args.tgt_len))
+    outDir = os.path.join(args.work_dir, args.split, str(args.mem_len))
     
     if os.path.exists(outDir):
         if args.no_write is False:

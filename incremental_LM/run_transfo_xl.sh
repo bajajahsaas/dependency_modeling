@@ -18,5 +18,5 @@ tgts=(8 16 32 64 128 256 512 1024)
 for tgt in "${tgts[@]}"
 do
     export MEM_LEN=$tgt
-    python run_transfo_xl.py --mem_len ${MEM_LEN} --work_dir outxl --model_name ${MODEL_PATH} --no_write --batch_size 1
+    python run_transfo_xl.py --mem_len ${MEM_LEN} --work_dir outxl --model_name ${MODEL_PATH} --no_write --batch_size 10
 done
