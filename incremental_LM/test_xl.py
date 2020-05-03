@@ -19,7 +19,7 @@ def score(sentence):
         tokenize_input = tokenizer.tokenize(sentence)
         tensor_input = torch.tensor([tokenizer.convert_tokens_to_ids(tokenize_input)])
         loss, prediction_score, _ = model(tensor_input, labels=tensor_input)
-        # prediction_score is None
+        # prediction_score is None, is not None when labels are empty
         loss = loss.mean()
         return math.exp(loss.item())
 

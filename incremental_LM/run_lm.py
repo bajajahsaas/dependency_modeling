@@ -165,7 +165,7 @@ def main():
         training_args.fp16,
     )
     logger.info("Training/evaluation parameters %s", training_args)
-
+    logging.getLogger("transformers.tokenization_transfo_xl").setLevel(logging.ERROR)
     # Set seed
     set_seed(training_args.seed)
 
@@ -217,10 +217,11 @@ def main():
     if model_args.model_type != "transfo-xl":
         model.resize_token_embeddings(len(tokenizer))
         # following throws error for transformer-xl
-    if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
-        ###### Addition to fix variable length issue #########
-        logger.info("Explicity adding padding token to tokenizer")
-        tokenizer.pad_token = "<pad>"
+    
+    # if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
+    #     ###### Addition to fix variable length issue #########
+    #     logger.info("Explicity adding padding token to tokenizer")
+    #     tokenizer.pad_token = "<pad>"
 
     if config.model_type in ["bert", "roberta", "distilbert", "camembert"] and not data_args.mlm:
         raise ValueError(
@@ -283,9 +284,9 @@ def main():
         perplexity = math.exp(eval_output["loss"])
         result = {"perplexity": perplexity}
 
-        output_eval_file = os.path.join(training_args.output_dir, "eval_results_lm.txt")
+        output_eval_file = os.path.join(training_args.output_dir, "eval_results_lm_" + model_args.model_type + "_" +  data_args.block_size + ".txt")
         with open(output_eval_file, "w") as writer:
-            logger.info("***** Eval results *****")
+            logger.info("***** Eval results for model: {} blocksize: {}*****".format(model_args.model_type, data_args.block_size))
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))

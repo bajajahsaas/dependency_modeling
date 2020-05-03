@@ -29,7 +29,7 @@ import numpy as np
 import torch
 import os
 
-from transformers import TransfoXLLMHeadModel, TransfoXLTokenizer, XLNetLMHeadModel, XLNetTokenizer, XLMWithLMHeadModel, XLMTokenizer
+from transformers import TransfoXLLMHeadModel, TransfoXLTokenizer
 from transformers.tokenization_transfo_xl import TransfoXLCorpus
 
 logging.basicConfig(
@@ -37,22 +37,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-MODEL_CLASSES = {
-    'transfo-xl': (XLNetLMHeadModel, XLNetTokenizer),
-    'xlnet': (XLNetLMHeadModel, XLNetTokenizer),
-    'xlm': (XLMWithLMHeadModel, XLMTokenizer)
-}
 
 def main():
     parser = argparse.ArgumentParser(description="PyTorch Transformer Language Model")
-    parser.add_argument("--model_name", type=str, default="transfo-xl", help="pretrained model name")
-    parser.add_argument("--model_path", type=str, default="transfo-xl-wt103", help="pretrained model path")
+    parser.add_argument("--model_name", type=str, default="transfo-xl-wt103", help="pretrained model name")
     parser.add_argument(
         "--split", type=str, default="valid", choices=["all", "valid", "test"], help="which split to evaluate"
     )
     parser.add_argument("--batch_size", type=int, default=10, help="batch size")
     parser.add_argument("--tgt_len", type=int, default=128, help="number of tokens to predict")
-    parser.add_argument("--ext_len", type=int, default=0, help="length of the extended context")
+    parser.add_argument("--ext_len", type=int, default=0, help="length of the extended context") # as per git issue, this was just for experimentation and never used
     parser.add_argument("--mem_len", type=int, default=1600, help="length of the retained previous heads")
     parser.add_argument("--clamp_len", type=int, default=1000, help="max positional embedding index")
     parser.add_argument("--no_cuda", action="store_true", help="Do not use CUDA even though CUA is available")
@@ -83,11 +77,11 @@ def main():
     # and tokenizing the dataset
     # The pre-processed corpus is a convertion (using the conversion script )
     
-    # this path has corpus.bin (wikitext-103 processed for transformer-xl)
-    corpus = TransfoXLCorpus.from_pretrained("/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/transfo-xl-wt103/")
+    corpus = TransfoXLCorpus.from_pretrained(args.model_name)
+    tokenizer = TransfoXLTokenizer.from_pretrained(args.model_name)
 
-    # corpus tokenized only for transformer-xl
-    
+
+
     # corpus.vocab : TransfoXLTokenizer object from TransfoXLTokenizer.from_pretrained()
     ntokens = len(corpus.vocab)
     logger.info("n_tokens: {}".format(ntokens))
@@ -98,13 +92,8 @@ def main():
     te_iter = corpus.get_iterator("test", args.batch_size, args.tgt_len, device=device, ext_len=args.ext_len)
 
     # Load a pre-trained model
-
-    model_class, tokenizer_class = MODEL_CLASSES[args.model_name]
-
-    model = model_class.from_pretrained(args.model_path)
+    model = TransfoXLLMHeadModel.from_pretrained(args.model_name)
     model = model.to(device)
-
-    tokenizer = tokenizer_class.from_pretrained(args.model_path)
 
     logger.info(
         "Evaluating with bsz {} tgt_len {} ext_len {} mem_len {} clamp_len {} no_write {}".format(
@@ -112,9 +101,7 @@ def main():
         )
     )
 
-    if args.model_name is 'transfo-xl':
-        model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
-        
+    model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
     if args.clamp_len > 0:
         model.clamp_len = args.clamp_len
     if args.same_length:
@@ -125,7 +112,7 @@ def main():
     ###############################################################################
     # Evaluation code
     ###############################################################################
-    def evaluate(eval_iter, outDir, args):
+    def evaluate(eval_iter, args):
 
         sentences = []
         targets = []
@@ -136,6 +123,9 @@ def main():
         # Turn on evaluation mode which disables dropout.
         model.eval()
         total_len, total_loss = 0, 0.0
+        total_loss1, total_loss2, total_loss3, total_loss4 = 0.0, 0.0, 0.0, 0.0
+        total_examples = 0
+        num_examples = 0
         start_time = time.time()
         with torch.no_grad():
             mems = None
@@ -145,96 +135,74 @@ def main():
                 # logger.info("sentence: {}".format(" ".join(tokenizer.convert_ids_to_tokens(data[0]))))
                 # logger.info("target: {}".format(" ".join(tokenizer.convert_ids_to_tokens(target[0]))))
 
-                if args.no_write is False:
-                    # Write predictions
-                    prediction_scores, mems = model(data, mems=mems)  # dims: (bsz, seqlen, config.vocab)
-
-                    prediction_scores = prediction_scores.view(-1, ntokens) # dims: (seqlen, vocab_sz)
-                    predictions = prediction_scores.softmax(dim=1) # dims: (seqlen, vocab_sz)
-
-                    predicted_ids = torch.argmax(predictions, dim=1) # dims: (seqlen)
-                    predicted_id_list = predicted_ids.tolist()
-                    predicted_tokens = tokenizer.convert_ids_to_tokens(predicted_id_list) # dims: (seqlen)
-                    # logger.info("Predicted_tokens: {}".format(" ".join(predicted_tokens)))
-                    probabilities_predicted = predictions.gather(1, predicted_ids.view(-1, 1)) # dims: (seqlen, 1)
-                    probabilities_predicted = torch.squeeze(probabilities_predicted) # dims: (seqlen)
-
-                    correct_ids = target[0]
-                    correct_ids = torch.tensor(correct_ids)
-                    correct_ids = correct_ids.to(device)
-                    probabilities_correct = predictions.gather(1, correct_ids.view(-1, 1))
-                    probabilities_correct = torch.squeeze(probabilities_correct)
-
-                    ranks = prediction_scores.size(1) - torch.zeros_like(prediction_scores).long().scatter_(1, prediction_scores.argsort(dim=1),
-                                                                                            torch.arange(
-                                                                                                prediction_scores.size(1),
-                                                                                                device=device).repeat(
-                                                                                                prediction_scores.size(0), 1))
-                    ranks = ranks.gather(1, correct_ids.view(-1, 1)).float()
-                    ranks = torch.squeeze(ranks)
-                    
-                    sent = tokenizer.convert_ids_to_tokens(data[0])
-                    if len(sent) == args.tgt_len:
-                        # last sentence may be shorter
-                        sentences.append(sent)
-                        targets.append(tokenizer.convert_ids_to_tokens(target[0]))
-                        pred_toks.append(predicted_tokens)
-                        probs_true.append(probabilities_correct.cpu().numpy())
-                        probs_pred.append(probabilities_predicted.cpu().numpy())
-                        ranks_true.append(ranks.cpu().numpy())
-
-
+    
                 # shifting happens inside the model, so labels = data. target is shifted version of data
                 # check forward() def. of TransfoXLLMHeadModel
                 ret = model(data, labels=data, mems=mems1)
                 loss, _ , mems1 = ret
                 # dims of loss: (bsz vs seqlen-1)
-                loss = loss.mean()
-                # logger.info("idx: {0}, seq_len: {1}, loss.item(): {2}".format(idx, seq_len, loss.item()))
-                 
-                total_loss += seq_len * loss.item()
-                total_len += seq_len
+
+                num_examples += loss.shape[0]
+
+                if seq_len < args.tgt_len:
+                    # add 0 in losses
+                    logger.info("Received a batch with outlying seq_len")   
+                                    
+                    continue
+                
+                thresh1 = int((seq_len/4))
+                thresh2 = 2*thresh1
+                thresh3 = 3*thresh1
             
+                loss1 = loss[:, :thresh1]
+                loss2 = loss[:, thresh1: thresh2]
+                loss3 = loss[:, thresh2: thresh3]
+                loss4 = loss[:, thresh3:]
+                
+                loss1 = loss1.mean()
+                loss2 = loss2.mean()
+                loss3 = loss3.mean()
+                loss4 = loss4.mean()
+
+                loss = loss.mean()
+
+                total_loss1 += loss1.item()
+                total_loss2 += loss2.item()
+                total_loss3 += loss3.item()
+                total_loss4 += loss4.item()
+                
+                total_loss += loss.item()
+                
+                total_examples += 1 # over which mean taken, to be divided by same. If bsz > 1, .mean() takes mean over all values. So at last divide by number of batches
+                
             total_time = time.time() - start_time
-        
-        if args.no_write is False:
-            # Write predictions
-            np.save(os.path.join(outDir, 'sentences.npy'), np.array(sentences))
-            np.save(os.path.join(outDir, 'targets.npy'), np.array(targets))
-            np.save(os.path.join(outDir, 'pred_toks.npy'), np.array(pred_toks))
-            np.save(os.path.join(outDir, 'probs_true.npy'), np.array(probs_true))
-            np.save(os.path.join(outDir, 'probs_pred.npy'), np.array(probs_pred))
-            np.save(os.path.join(outDir, 'ranks_true.npy'), np.array(ranks_true))
         
         
         logger.info("Time : {:.2f}s, {:.2f}ms/segment".format(total_time, 1000 * total_time / (idx + 1)))
-        return total_loss / total_len
+        logger.info("Total number of examples: {}".format(num_examples))
+
+        avloss1, avloss2, avloss3, avloss4, avloss = total_loss1 / total_examples, total_loss2 / total_examples, total_loss3 / total_examples, total_loss4 / total_examples, total_loss / total_examples
+        return avloss1, avloss2, avloss3, avloss4, avloss
 
     # Run on test data.
-    outDir = os.path.join(args.work_dir, args.split, str(args.tgt_len))
-    
-    if os.path.exists(outDir):
-        if args.no_write is False:
-            # empty directory if to be written further
-            logger.info("Emptying outDir: {} to be ready for writing".format(outDir))
-            filelist = [f for f in os.listdir(outDir)]
-            for f in filelist:
-                os.remove(os.path.join(outDir, f))
-    else:
-        os.makedirs(outDir)
-
+   
     if args.split == "all":
-        test_loss = evaluate(te_iter, os.path.join(args.work_dir, "test", args.tgt_len), args)
-        valid_loss = evaluate(va_iter, os.path.join(args.work_dir, "valid", args.tgt_len), args)
+        test_loss = evaluate(te_iter, os.path.join(args.work_dir, args.tgt_len), args)
+        valid_loss = evaluate(va_iter, os.path.join(args.work_dir, args.tgt_len), args)
     elif args.split == "valid":
-        valid_loss = evaluate(va_iter, outDir, args)
+        valid_loss = evaluate(va_iter, args)
         test_loss = None
     elif args.split == "test":
-        test_loss = evaluate(te_iter, outDir, args)
+        test_loss = evaluate(te_iter, args)
         valid_loss = None
 
-    def format_log(loss, split):
-        log_str = "| {0} loss {1:5.2f} | {0} ppl {2:9.3f} ".format(split, loss, math.exp(loss))
+    def compute_perpl(losses):
+        l1, l2, l3, l4, l = losses
+        return math.exp(l1), math.exp(l2), math.exp(l3), math.exp(l4), math.exp(l)
+
+    def format_log(losses, split):
+        ppl1, ppl2, ppl3, ppl4, ppl = compute_perpl(losses)
+        log_str = "|{0} ppl1 {1:9.3f} ppl2 {2:9.3f} ppl3 {3:9.3f} ppl4 {4:9.3f}, ppl {5:9.3f}".format(split, ppl1, ppl2, ppl3, ppl4, ppl)
         return log_str
 
     log_str = ""
@@ -243,15 +211,9 @@ def main():
     if test_loss is not None:
         log_str += format_log(test_loss, "test")
 
-
-
     logger.info("=" * 100)
     logger.info(log_str)
     logger.info("=" * 100)
-
-    output_eval_file = os.path.join(outDir, "eval_results_lm.txt")
-    with open(output_eval_file, "w") as writer:
-        writer.write(log_str + "\n")
 
     logger.info("Process Completed")
 
