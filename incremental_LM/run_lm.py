@@ -19,7 +19,6 @@ GPT and GPT-2 are fine-tuned using a causal language modeling (CLM) loss while B
 using a masked language modeling (MLM) loss.
 """
 
-
 import logging
 import math
 import os
@@ -42,12 +41,12 @@ from transformers import (
     set_seed,
 )
 
-
 logger = logging.getLogger(__name__)
 
-
 MODEL_CONFIG_CLASSES = list(MODEL_WITH_LM_HEAD_MAPPING.keys())
-MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES) # ('t5', 'distilbert', 'albert', 'camembert', 'xlm-roberta', 'bart', 'roberta', 'bert', 'openai-gpt', 'gpt2', 'transfo-xl', 'xlnet', 'flaubert', 'xlm', 'ctrl', 'electra')
+MODEL_TYPES = tuple(conf.model_type for conf in
+                    MODEL_CONFIG_CLASSES)  # ('t5', 'distilbert', 'albert', 'camembert', 'xlm-roberta', 'bart', 'roberta', 'bert', 'openai-gpt', 'gpt2', 'transfo-xl', 'xlnet', 'flaubert', 'xlm', 'ctrl', 'electra')
+
 
 @dataclass
 class ModelArguments:
@@ -105,8 +104,8 @@ class DataTrainingArguments:
         default=-1,
         metadata={
             "help": "Optional input sequence length after tokenization."
-            "The training dataset will be truncated in block of this size for training."
-            "Default to the model max input length for single sentence inputs (take into account special tokens)."
+                    "The training dataset will be truncated in block of this size for training."
+                    "Default to the model max input length for single sentence inputs (take into account special tokens)."
         },
     )
     overwrite_cache: bool = field(
@@ -141,10 +140,10 @@ def main():
         )
 
     if (
-        os.path.exists(training_args.output_dir)
-        and os.listdir(training_args.output_dir)
-        and training_args.do_train
-        and not training_args.overwrite_output_dir
+            os.path.exists(training_args.output_dir)
+            and os.listdir(training_args.output_dir)
+            and training_args.do_train
+            and not training_args.overwrite_output_dir
     ):
         raise ValueError(
             f"Output directory ({training_args.output_dir}) already exists and is not empty. Use --overwrite_output_dir to overcome."
@@ -193,7 +192,6 @@ def main():
             "and load it from here, using --tokenizer_name"
         )
 
-
     if model_args.model_name_or_path:
         model = AutoModelWithLMHead.from_pretrained(
             model_args.model_name_or_path,
@@ -205,7 +203,8 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelWithLMHead.from_config(config)
 
-    assert (config.vocab_size == len(tokenizer)) # if true, below line has no impact (true for transformer-xl. so can comment)
+    assert (config.vocab_size == len(
+        tokenizer))  # if true, below line has no impact (true for transformer-xl. so can comment)
     '''
     Resize input token embeddings matrix of the model if new_num_tokens != config.vocab_size. Take care of tying weights embeddings afterwards if the model class has a tie_weights() method.
 
@@ -217,11 +216,12 @@ def main():
     if model_args.model_type != "transfo-xl":
         model.resize_token_embeddings(len(tokenizer))
         # following throws error for transformer-xl
-    
-    # if model_args.model_type == "transfo-xl" or model_args.model_type == "gpt2":
-    #     ###### Addition to fix variable length issue #########
-    #     logger.info("Explicity adding padding token to tokenizer")
-    #     tokenizer.pad_token = "<pad>"
+
+    if model_args.model_type == "transfo-xl":
+        ###### Addition to fix variable length issue #########
+        # Very important for transformer-xl (for gpt2, fix in hugginface datacollator will work)
+        logger.info("Explicity adding padding token to tokenizer")
+        tokenizer.pad_token = "<pad>"
 
     if config.model_type in ["bert", "roberta", "distilbert", "camembert"] and not data_args.mlm:
         raise ValueError(
@@ -284,9 +284,12 @@ def main():
         perplexity = math.exp(eval_output["loss"])
         result = {"perplexity": perplexity}
 
-        output_eval_file = os.path.join(training_args.output_dir, "eval_results_lm_" + model_args.model_type + "_" +  data_args.block_size + ".txt")
+        output_eval_file = os.path.join(training_args.output_dir,
+                                        "eval_results_lm_" + model_args.model_type + "_" + str(
+                                            data_args.block_size) + ".txt")
         with open(output_eval_file, "w") as writer:
-            logger.info("***** Eval results for model: {} blocksize: {}*****".format(model_args.model_type, data_args.block_size))
+            logger.info("***** Eval results for model: {} blocksize: {}*****".format(model_args.model_type,
+                                                                                     data_args.block_size))
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))

@@ -49,7 +49,7 @@ def main():
     parser.add_argument("--tgt_len", type=int, default=128, help="number of tokens to predict")
     parser.add_argument("--ext_len", type=int, default=0, help="length of the extended context")
     parser.add_argument("--mem_len", type=int, default=1600, help="length of the retained previous heads")
-    parser.add_argument("--clamp_len", type=int, default=400, help="max positional embedding index")
+    parser.add_argument("--clamp_len", type=int, default=1000, help="max positional embedding index")
     parser.add_argument("--no_cuda", action="store_true", help="Do not use CUDA even though CUA is available")
     parser.add_argument("--work_dir", type=str, required=True, help="path to the work_dir")
     parser.add_argument("--no_log", action="store_true", help="do not log the eval result")

@@ -12,4 +12,4 @@
 export MODEL_PATH=/mnt/nfs/work1/696ds-s20/abajaj/nlplab/long-term-context/models/transfo-xl-wt103/
 
 # python test_xl.py ${MODEL_PATH}
-python run_transfo_xl_inc.py --work_dir outxl --model_name ${MODEL_PATH} --no_write # use batch_size 1 when to write predictions
+python run_transfo_xl_inc.py --work_dir outxl --same_length --model_name ${MODEL_PATH} --no_write # use batch_size 1 when to write predictions
